@@ -94,23 +94,42 @@ alert("Se enfrentan: \n" + listaDeBoxeadores[indexBoxeadorUsuario].nombre + " Vs
 
 function pelea(jugador, oponente) {
     let victorias = [0,0];
-    const comparador = [jugador.vitalidad >= oponente.vitalidad, jugador.energia >= oponente.energia, jugador.velocidad >= oponente.velocidad, jugador.fuerza >= oponente.fuerza, jugador.defensa >= oponente.defensa, jugador.tenacidad >= oponente.tenacidad];
-    for (i = 1; i <=12; i ++){
-        let indexComparador = Math.floor(Math.random() * 6);
+    let ganadorKnokOut = null;
+    let round = 1;
+    
+    let tenacidadMaxima = Math.max(jugador.tenacidad, oponente.tenacidad);
+
+    const bonusPorDerrota = 1.5;
+    const comparador = [jugador.vitalidad >= oponente.vitalidad, jugador.energia >= oponente.energia, jugador.velocidad >= oponente.velocidad, jugador.fuerza >= oponente.fuerza, jugador.defensa >= oponente.defensa];
+    do {
+        let indexComparador = Math.floor(Math.random() * 5);
         if (comparador[indexComparador]){
             victorias [0]++;
+            if (oponente.tenacidad - victorias[0] * bonusPorDerrota < Math.random() * tenacidadMaxima) {
+                ganadorKnokOut = 0;
+            }
         }else{
             victorias [1]++;
+            if (jugador.tenacidad - victorias [1] * bonusPorDerrota < Math.random() * tenacidadMaxima) {
+                ganadorKnokOut = 1;
+            }
         }
-    }
+        round ++;
+    }while (round <= 12 && ganadorKnokOut === null)
+
     alert(jugador.nombre + " ganó " + victorias[0] + " Rounds\n" + oponente.nombre + " ganó " + victorias[1] + " Rounds\n");
-    if (victorias[0]>victorias[1]){
+
+    if (ganadorKnokOut === 0) {
+        alert("Ganador por Knockout, en el round número " + (round - 1) + ": "  + jugador.nombre);
+    }else if (ganadorKnokOut === 1) {
+        alert("Ganador por Knockout, en el round número " + (round - 1) + ": "  + oponente.nombre);
+    }else if (victorias[0]>victorias[1]){
         alert("Ganador por puntos: " + jugador.nombre);
     }else if (victorias[0]<victorias[1]){
         alert("Ganador por puntos: " + oponente.nombre);
     }else{
         alert("Empate");
-        }
+    }
 }
 
 pelea(listaDeBoxeadores[indexBoxeadorUsuario],boxeadoresOponentes[indexOponente]);
